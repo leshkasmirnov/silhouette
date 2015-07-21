@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+  <classPathEntry location="D:/Work/mysql-connector-java-5.1.22.jar" />
+  <context id="mysql" >
+  <property name="autoDelimitKeywords" value="true"/>
+  <property name="beginningDelimiter" value="`"/>
+  <property name="endingDelimiter" value="`"/>
+<!--   <plugin type="com.ritech.mybatis.generator.plugins.FixMySqlAliasInDeleteStatementsPlugin"/> -->
+<!--   <plugin type="com.ritech.mybatis.generator.plugins.RootJavaClientPlugin"> -->
+<!--   	<property name="rootInterface" value="com.rgs.gots.common.dao.GenericMapper"/> -->
+<!--   </plugin> -->
+  <plugin type="org.mybatis.generator.plugins.CaseInsensitiveLikePlugin"/>
+  <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
+  <commentGenerator type="DEFAULT">
+  	<property name="suppressDate" value="true"/>
+  </commentGenerator>
+    <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://localhost/silhouette_dev?autoReconnect=true&amp;useUnicode=yes&amp;characterEncoding=UTF-8" userId="root" password="1234" />
+    <javaModelGenerator targetPackage="ru.rybinsk.silhouette.model" targetProject="silhouette">
+    	<property name="rootClass" value="ru.rybinsk.silhouette.model.BaseModel"/>
+    </javaModelGenerator>
+    <sqlMapGenerator targetPackage="ru.rybinsk.silhouette.dao" targetProject="silhouette" />
+    <javaClientGenerator targetPackage="ru.rybinsk.silhouette.dao" targetProject="silhouette" type="XMLMAPPER">
+    </javaClientGenerator>
+  
+	<!-- <table schema="silhouette" tableName="Personal_Data" alias="pd">
+		<generatedKey column="id" identity="true" sqlStatement="MySql" />
+	</table>-->
+	<table schema="silhouette" tableName="Subscription" alias="sn">
+		<generatedKey column="id" identity="true" sqlStatement="MySql" />
+	</table>  
+	<!-- <table schema="silhouette" tableName="Payment" alias="pyt">
+		<generatedKey column="id" identity="true" sqlStatement="MySql" />
+	</table>-->
+	<table schema="silhouette" tableName="Simulator" alias="sr">
+		<generatedKey column="id" identity="true" sqlStatement="MySql" />
+	</table>
+	<!-- <table schema="silhouette" tableName="Time_Table" alias="tt">
+		<generatedKey column="id" identity="true" sqlStatement="MySql" />
+	</table>
+	<table schema="silhouette" tableName="Log" alias="lg">
+		<generatedKey column="id" identity="true" sqlStatement="MySql" />
+	</table>
+	<table schema="silhouette" tableName="Ambry" alias="ambr">
+		<generatedKey column="id" identity="true" sqlStatement="MySql" />
+	</table>-->
+ 
+  </context>
+</generatorConfiguration>
