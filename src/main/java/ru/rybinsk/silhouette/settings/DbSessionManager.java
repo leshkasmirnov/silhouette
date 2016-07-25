@@ -12,14 +12,9 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
-import ru.rybinsk.silhouette.dao.AmbryMapper;
-import ru.rybinsk.silhouette.dao.LogMapper;
-import ru.rybinsk.silhouette.dao.PaymentMapper;
-import ru.rybinsk.silhouette.dao.PersonalDataMapper;
-import ru.rybinsk.silhouette.dao.SimulatorMapper;
-import ru.rybinsk.silhouette.dao.SubscriptionMapper;
-import ru.rybinsk.silhouette.dao.TimeTableMapper;
+import ru.rybinsk.silhouette.dao.*;
 import ru.rybinsk.silhouette.internal.SystemConstants;
+import ru.rybinsk.silhouette.model.Settings;
 import ru.rybinsk.silhouette.throwable.SilhouetteRuntimeException;
 
 /**
@@ -59,6 +54,7 @@ public class DbSessionManager {
         config.addMapper(TimeTableMapper.class);
         config.addMapper(LogMapper.class);
         config.addMapper(AmbryMapper.class);
+        config.addMapper(SettingsMapper.class);
 
         ssf = ssfb.build(config);
     }

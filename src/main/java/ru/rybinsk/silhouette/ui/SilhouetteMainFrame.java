@@ -28,12 +28,15 @@ public class SilhouetteMainFrame extends JFrame implements ActionListener, Windo
     private static final String REPORTS_MUNU_ITEM = "reportsMunuItem";
     private static final String TIME_TABLE_MENU_ITEM = "timeTableMenuItem";
     private static final String CLIENTS_LIST_MENU_ITEM = "clientsList";
+    private static final String BACKUP_SETTINGS_MENU_ITEM = "backupSettingsMenuItem";
+
     private static final long serialVersionUID = 1L;
     private static final String MAIN_TITLE = "Спортивно-оздоровительный клуб \"Силуэт\". Версия "
             + SystemConstants.VERSION;
     private JMenu clientsMenu;
     private JMenu timeTableMenu;
     private JMenu reportsMenu;
+    private JMenu settingsMenu;
 
     public SilhouetteMainFrame() {
         setTitle(MAIN_TITLE);
@@ -51,26 +54,33 @@ public class SilhouetteMainFrame extends JFrame implements ActionListener, Windo
         clientsMenu = new JMenu("Клиенты");
         timeTableMenu = new JMenu("Расписание");
         reportsMenu = new JMenu("Отчеты");
+        settingsMenu = new JMenu("Настройки");
 
         JMenuItem clientsMenuItem = new JMenuItem("Список клиентов");
         JMenuItem timeTableMenuItem = new JMenuItem("Тренажеры");
         JMenuItem reportsMenuItem = new JMenuItem("Отчеты");
+        JMenuItem backupSettingsMenuItem = new JMenuItem("Настройки резервного копирования");
 
         timeTableMenuItem.setActionCommand(TIME_TABLE_MENU_ITEM);
         clientsMenuItem.setActionCommand(CLIENTS_LIST_MENU_ITEM);
         reportsMenuItem.setActionCommand(REPORTS_MUNU_ITEM);
+        backupSettingsMenuItem.setActionCommand(BACKUP_SETTINGS_MENU_ITEM);
 
         clientsMenu.add(clientsMenuItem);
         timeTableMenu.add(timeTableMenuItem);
+        settingsMenu.add(backupSettingsMenuItem);
 
         menuBar.add(clientsMenu);
         menuBar.add(timeTableMenu);
         menuBar.add(reportsMenu);
+        menuBar.add(settingsMenu);
         reportsMenu.add(reportsMenuItem);
 
         timeTableMenuItem.addActionListener(this);
         clientsMenuItem.addActionListener(this);
         reportsMenuItem.addActionListener(this);
+        backupSettingsMenuItem.addActionListener(this);
+
         getContentPane().setLayout(new MigLayout());
         setJMenuBar(menuBar);
         addWindowListener(this);
@@ -86,6 +96,7 @@ public class SilhouetteMainFrame extends JFrame implements ActionListener, Windo
         clientsMenu.setSelected(true);
         reportsMenu.setSelected(false);
         timeTableMenu.setSelected(false);
+        settingsMenu.setSelected(false);
         // pack();
     }
 
@@ -106,6 +117,7 @@ public class SilhouetteMainFrame extends JFrame implements ActionListener, Windo
             clientsMenu.setSelected(false);
             reportsMenu.setSelected(false);
             timeTableMenu.setSelected(true);
+            settingsMenu.setSelected(false);
         } else if (event.getActionCommand().equals(REPORTS_MUNU_ITEM)) {
             getContentPane().removeAll();
             ReportsView reportsView = new ReportsView();
@@ -115,7 +127,18 @@ public class SilhouetteMainFrame extends JFrame implements ActionListener, Windo
             clientsMenu.setSelected(false);
             reportsMenu.setSelected(true);
             timeTableMenu.setSelected(false);
+            settingsMenu.setSelected(false);
             // pack();
+        }else if (BACKUP_SETTINGS_MENU_ITEM.equals(event.getActionCommand())){
+            getContentPane().removeAll();
+            BackupSettingsView backupSettingsView = new BackupSettingsView();
+            add(backupSettingsView);
+            getContentPane().repaint();
+            getContentPane().revalidate();
+            clientsMenu.setSelected(false);
+            reportsMenu.setSelected(false);
+            timeTableMenu.setSelected(false);
+            settingsMenu.setSelected(true);
         }
     }
 
