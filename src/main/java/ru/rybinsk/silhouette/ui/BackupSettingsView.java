@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Интерфейс настройки резервного копирования.
@@ -77,7 +79,14 @@ public class BackupSettingsView extends JPanel implements ActionListener {
     }
 
     private void saveChanges() {
+        Map<String, String> settings = new HashMap<String, String>();
+        settings.put(SettingsServiceImpl.SettingNames.MYSQL_HOME, mysqlHomeField.getText());
+        settings.put(SettingsServiceImpl.SettingNames.SAVE_PATH, savePathField.getText());
+        settings.put(SettingsServiceImpl.SettingNames.BACKUP_COUNTS, String.valueOf(backupCountsField.getValue()));
+        settings.put(SettingsServiceImpl.SettingNames.DO_ON_STARTUP, String.valueOf(doOnStartupField.isSelected()));
 
+        SettingsService settingsService = SettingsServiceImpl.getInstance();
+        settingsService.saveSettings(settings);
     }
 
     private void showFileChooser(JTextField jTextField, FileValidator fileValidator) {
