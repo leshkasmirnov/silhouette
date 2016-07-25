@@ -18,7 +18,7 @@ public class DbServiceTest {
     public void testCreateBackup(){
         DbService dbService = DbServiceImpl.getInstance();
         try {
-            dbService.createBackup(PATH);
+            dbService.createBackup(PATH,"");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

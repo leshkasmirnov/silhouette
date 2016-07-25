@@ -16,6 +16,10 @@ import javax.swing.JMenuItem;
 
 import net.miginfocom.swing.MigLayout;
 import ru.rybinsk.silhouette.internal.SystemConstants;
+import ru.rybinsk.silhouette.services.DbService;
+import ru.rybinsk.silhouette.services.SettingsService;
+import ru.rybinsk.silhouette.services.impl.DbServiceImpl;
+import ru.rybinsk.silhouette.services.impl.SettingsServiceImpl;
 import ru.rybinsk.silhouette.ui.components.ConfirmDialog;
 import ru.rybinsk.silhouette.ui.forms.MainTimeTable;
 
@@ -156,7 +160,46 @@ public class SilhouetteMainFrame extends JFrame implements ActionListener, Windo
         ConfirmDialog dialog = new ConfirmDialog("Вы действительно хотите выйти из программы ?");
         dialog.setVisible(true);
         if (dialog.getAnswer()) {
-            System.exit(0);
+            SettingsService settingsService = SettingsServiceImpl.getInstance();
+            if (Boolean.parseBoolean(settingsService.getSetting(SettingsServiceImpl.SettingNames.DO_ON_EXIT))){
+                DbService dbService = DbServiceImpl.getInstance();
+                try {
+                    dbService.createBackup(settingsService.getSetting(SettingsServiceImpl.SettingNames.MYSQL_HOME),
+                            settingsService.getSetting(SettingsServiceImpl.SettingNames.SAVE_PATH));
+                    System.exit(0);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                    ErrorDialog errorDialog = new ErrorDialog("Ошибка при создании бэкапа! " + e1.getMessage());
+                    errorDialog.setVisible(true);
+                    errorDialog.addWindowListener(new WindowListener() {
+                        @Override
+                        public void windowOpened(WindowEvent e) {
+                        }
+                        @Override
+                        public void windowClosing(WindowEvent e) {
+                        }
+                        @Override
+                        public void windowClosed(WindowEvent e) {
+                        }
+                        @Override
+                        public void windowIconified(WindowEvent e) {
+                        }
+                        @Override
+                        public void windowDeiconified(WindowEvent e) {
+                        }
+                        @Override
+                        public void windowActivated(WindowEvent e) {
+                        }
+                        @Override
+                        public void windowDeactivated(WindowEvent e) {
+                            System.exit(0);
+                        }
+                    });
+                }
+            }else{
+                System.exit(0);
+            }
+
         }
     }
 

@@ -2,13 +2,16 @@ package ru.rybinsk.silhouette.ui;
 
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.ArrayUtils;
+import ru.rybinsk.silhouette.services.DbService;
 import ru.rybinsk.silhouette.services.SettingsService;
+import ru.rybinsk.silhouette.services.impl.DbServiceImpl;
 import ru.rybinsk.silhouette.services.impl.SettingsServiceImpl;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +26,7 @@ public class BackupSettingsView extends JPanel implements ActionListener {
     private static final String BROWSE_SAVE_PATH_COMMAND = "browseSavePath";
     private static final String BROWSE_MYSQL_HOME_COMMAND = "browseMysqlHome";
     private static final String SAVE_COMMAND = "save";
+    private static final String BACKUP_COMMAND = "backup";
 
     private static final String[] MYSQL_DIR_FILE_NAMES = new String[]{"mysql.exe","mysqldump.exe"};
 
@@ -30,6 +34,7 @@ public class BackupSettingsView extends JPanel implements ActionListener {
     private JTextField mysqlHomeField;
     private JSpinner backupCountsField;
     private JCheckBox doOnStartupField;
+    private JCheckBox doOnExitField;
 
     public BackupSettingsView() {
         setLayout(new MigLayout());
@@ -44,13 +49,17 @@ public class BackupSettingsView extends JPanel implements ActionListener {
         JLabel savePathLabel = new JLabel("Путь для сохранения резервных копий");
         savePathField = new JTextField(30);
         JLabel backupCountsLabel = new JLabel("Количество сохраняемых бэкапов");
-        backupCountsField = new JSpinner();
+        SpinnerModel sm = new SpinnerNumberModel(Integer.parseInt(settingsService.getSetting(SettingsServiceImpl.SettingNames.BACKUP_COUNTS)), 1, 50, 1);
+        backupCountsField = new JSpinner(sm);
         JLabel doOnStartupLabel = new JLabel("Делать резервную копию при старте");
         doOnStartupField = new JCheckBox();
+        JLabel doOnExitLabel = new JLabel("Делать резервную копию при закрытии");
+        doOnExitField = new JCheckBox();
 
         JButton browseSavePathBtn = new JButton("Обзор");
         JButton browseMysqlHomeBtn = new JButton("Обзор");
         JButton saveButton = new JButton("Сохранить");
+        JButton backupButton = new JButton("Сделать резервную копию");
 
         browseSavePathBtn.setActionCommand(BROWSE_SAVE_PATH_COMMAND);
         browseSavePathBtn.addActionListener(this);
@@ -58,12 +67,14 @@ public class BackupSettingsView extends JPanel implements ActionListener {
         browseMysqlHomeBtn.addActionListener(this);
         saveButton.addActionListener(this);
         saveButton.setActionCommand(SAVE_COMMAND);
+        backupButton.addActionListener(this);
+        backupButton.setActionCommand(BACKUP_COMMAND);
         savePathField.setEditable(false);
         savePathField.setText(settingsService.getSetting(SettingsServiceImpl.SettingNames.SAVE_PATH));
         mysqlHomeField.setEditable(false);
         mysqlHomeField.setText(settingsService.getSetting(SettingsServiceImpl.SettingNames.MYSQL_HOME));
-        backupCountsField.setValue(new Integer(settingsService.getSetting(SettingsServiceImpl.SettingNames.BACKUP_COUNTS)));
         doOnStartupField.setSelected(new Boolean(settingsService.getSetting(SettingsServiceImpl.SettingNames.DO_ON_STARTUP)));
+        doOnExitField.setSelected(new Boolean(settingsService.getSetting(SettingsServiceImpl.SettingNames.DO_ON_EXIT)));
 
         add(mysqlHomeLabel, "cell 0 1");
         add(mysqlHomeField, "span 2 1");
@@ -75,7 +86,10 @@ public class BackupSettingsView extends JPanel implements ActionListener {
         add(backupCountsField, "span 2 1");
         add(doOnStartupLabel, "cell 0 4");
         add(doOnStartupField, "span 2 1");
-        add(saveButton, "cell 0 5");
+        add(doOnExitLabel, "cell 0 5");
+        add(doOnExitField, "span 2 1");
+        add(saveButton, "cell 0 6");
+        add(backupButton);
     }
 
     private void saveChanges() {
@@ -84,6 +98,7 @@ public class BackupSettingsView extends JPanel implements ActionListener {
         settings.put(SettingsServiceImpl.SettingNames.SAVE_PATH, savePathField.getText());
         settings.put(SettingsServiceImpl.SettingNames.BACKUP_COUNTS, String.valueOf(backupCountsField.getValue()));
         settings.put(SettingsServiceImpl.SettingNames.DO_ON_STARTUP, String.valueOf(doOnStartupField.isSelected()));
+        settings.put(SettingsServiceImpl.SettingNames.DO_ON_EXIT, String.valueOf(doOnExitField.isSelected()));
 
         SettingsService settingsService = SettingsServiceImpl.getInstance();
         settingsService.saveSettings(settings);
@@ -126,6 +141,17 @@ public class BackupSettingsView extends JPanel implements ActionListener {
             });
         } else if (SAVE_COMMAND.equals(e.getActionCommand())) {
             saveChanges();
+        } else if (BACKUP_COMMAND.equals(e.getActionCommand())){
+            SettingsService settingsService = SettingsServiceImpl.getInstance();
+            DbService dbService = DbServiceImpl.getInstance();
+            try {
+                dbService.createBackup(settingsService.getSetting(SettingsServiceImpl.SettingNames.MYSQL_HOME),
+                        settingsService.getSetting(SettingsServiceImpl.SettingNames.SAVE_PATH));
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                ErrorDialog errorDialog = new ErrorDialog("Ошибка при создании бэкапа! " + e1.getMessage());
+                errorDialog.setVisible(true);
+            }
         }
     }
 

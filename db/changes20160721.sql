@@ -9,3 +9,4 @@ INSERT INTO `settings` (`id`, `param_name`, `param_value`) VALUES ('1', 'mysql.h
 INSERT INTO `settings` (`id`, `param_name`, `param_value`) VALUES ('2', 'save.path', 'H:\\');
 INSERT INTO `settings` (`id`, `param_name`, `param_value`) VALUES ('3', 'backup.counts', '3');
 INSERT INTO `settings` (`id`, `param_name`, `param_value`) VALUES ('4', 'do.on.startup', 'true');
+INSERT INTO `settings` (`id`, `param_name`, `param_value`) VALUES ('5', 'do.on.exit', 'true');

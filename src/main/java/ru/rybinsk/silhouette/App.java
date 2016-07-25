@@ -7,8 +7,13 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import ru.rybinsk.silhouette.services.DbService;
+import ru.rybinsk.silhouette.services.SettingsService;
+import ru.rybinsk.silhouette.services.impl.DbServiceImpl;
+import ru.rybinsk.silhouette.services.impl.SettingsServiceImpl;
 import ru.rybinsk.silhouette.settings.ApplicationHolder;
 import ru.rybinsk.silhouette.settings.DbSessionManager;
+import ru.rybinsk.silhouette.ui.ErrorDialog;
 import ru.rybinsk.silhouette.ui.SilhouetteMainFrame;
 import ru.rybinsk.silhouette.util.Logger;
 
@@ -44,5 +49,17 @@ public class App {
         ApplicationHolder.setMainFrame(mainFrame);
         mainFrame.setVisible(true);
 
+        SettingsService settingsService = SettingsServiceImpl.getInstance();
+        if (Boolean.parseBoolean(settingsService.getSetting(SettingsServiceImpl.SettingNames.DO_ON_STARTUP))){
+            DbService dbService = DbServiceImpl.getInstance();
+            try {
+                dbService.createBackup(settingsService.getSetting(SettingsServiceImpl.SettingNames.MYSQL_HOME),
+                        settingsService.getSetting(SettingsServiceImpl.SettingNames.SAVE_PATH));
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                ErrorDialog errorDialog = new ErrorDialog("Ошибка при создании бэкапа! " + e1.getMessage());
+                errorDialog.setVisible(true);
+            }
+        }
     }
 }

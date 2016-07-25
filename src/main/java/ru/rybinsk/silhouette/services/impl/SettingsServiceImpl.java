@@ -20,6 +20,7 @@ public class SettingsServiceImpl implements SettingsService {
         public static final String SAVE_PATH = "save.path";
         public static final String BACKUP_COUNTS = "backup.counts";
         public static final String DO_ON_STARTUP = "do.on.startup";
+        public static final String DO_ON_EXIT = "do.on.exit";
     }
 
     private static SettingsService instance;
