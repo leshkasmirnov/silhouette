@@ -165,7 +165,8 @@ public class SilhouetteMainFrame extends JFrame implements ActionListener, Windo
                 DbService dbService = DbServiceImpl.getInstance();
                 try {
                     dbService.createBackup(settingsService.getSetting(SettingsServiceImpl.SettingNames.MYSQL_HOME),
-                            settingsService.getSetting(SettingsServiceImpl.SettingNames.SAVE_PATH));
+                            settingsService.getSetting(SettingsServiceImpl.SettingNames.SAVE_PATH),
+                            settingsService.getSetting(SettingsServiceImpl.SettingNames.ADDITIONAL_SAVE_PATH));
                     System.exit(0);
                 } catch (Exception e1) {
                     e1.printStackTrace();

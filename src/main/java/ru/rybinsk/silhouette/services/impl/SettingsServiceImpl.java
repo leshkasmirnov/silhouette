@@ -18,6 +18,7 @@ public class SettingsServiceImpl implements SettingsService {
     public class SettingNames {
         public static final String MYSQL_HOME = "mysql.home";
         public static final String SAVE_PATH = "save.path";
+        public static final String ADDITIONAL_SAVE_PATH = "additional.save.path";
         public static final String BACKUP_COUNTS = "backup.counts";
         public static final String DO_ON_STARTUP = "do.on.startup";
         public static final String DO_ON_EXIT = "do.on.exit";
@@ -38,10 +39,7 @@ public class SettingsServiceImpl implements SettingsService {
         SettingsExample settingsExample = new SettingsExample();
         settingsExample.createCriteria().andParamNameEqualTo(name);
         List<Settings> finded = settingsMapper.selectByExample(settingsExample);
-        if (finded.size() == 0) {
-            throw new RuntimeException("Не найдена настройка: [" + name + "]");
-        }
-        return finded.get(0).getParamValue();
+        return finded.size() > 0 ? finded.get(0).getParamValue() : null;
     }
 
     @Override

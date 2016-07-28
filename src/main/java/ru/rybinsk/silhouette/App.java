@@ -19,9 +19,8 @@ import ru.rybinsk.silhouette.util.Logger;
 
 /**
  * Точка входа в приложение.
- * 
+ *
  * @author Alexey Smirnov (smirnov89@bk.ru)
- * 
  */
 public class App {
 
@@ -50,11 +49,12 @@ public class App {
         mainFrame.setVisible(true);
 
         SettingsService settingsService = SettingsServiceImpl.getInstance();
-        if (Boolean.parseBoolean(settingsService.getSetting(SettingsServiceImpl.SettingNames.DO_ON_STARTUP))){
+        if (Boolean.parseBoolean(settingsService.getSetting(SettingsServiceImpl.SettingNames.DO_ON_STARTUP))) {
             DbService dbService = DbServiceImpl.getInstance();
             try {
                 dbService.createBackup(settingsService.getSetting(SettingsServiceImpl.SettingNames.MYSQL_HOME),
-                        settingsService.getSetting(SettingsServiceImpl.SettingNames.SAVE_PATH));
+                        settingsService.getSetting(SettingsServiceImpl.SettingNames.SAVE_PATH),
+                        settingsService.getSetting(SettingsServiceImpl.SettingNames.ADDITIONAL_SAVE_PATH));
             } catch (Exception e1) {
                 e1.printStackTrace();
                 ErrorDialog errorDialog = new ErrorDialog("Ошибка при создании бэкапа! " + e1.getMessage());

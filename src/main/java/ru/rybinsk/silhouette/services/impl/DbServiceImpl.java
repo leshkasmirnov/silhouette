@@ -35,10 +35,17 @@ public class DbServiceImpl implements DbService {
         return instance;
     }
 
-    private void checkPaths(String mysqlPath, String savePath) throws FileNotFoundException {
+    private void checkPaths(String mysqlPath, String savePath, String additionalSavePath) throws FileNotFoundException {
         File saveDir = new File(savePath);
         if (!saveDir.exists()) {
             throw new FileNotFoundException("Каталог для сохранения резервной копии не существует!");
+        }
+
+        if (additionalSavePath != null) {
+            File addSaveDir = new File(additionalSavePath);
+            if (!addSaveDir.exists()) {
+                throw new FileNotFoundException("Каталог для сохранения дополнительной резервной копии не существует!");
+            }
         }
 
         File mysqlDir = new File(mysqlPath);
@@ -56,9 +63,9 @@ public class DbServiceImpl implements DbService {
             int processComplete = runtimeProcess.waitFor();
 
             if (processComplete == 0) {
-                System.out.println("Backup Complete");
+                Logger.log("Создание резервной копии. Успешно.");
             } else {
-                System.out.println("Backup Failure");
+                Logger.log("Создание резервной копии. Провал.");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -86,12 +93,7 @@ public class DbServiceImpl implements DbService {
         });
     }
 
-    @Override
-    public void createBackup(String mysqlPath, String savePath) throws FileNotFoundException {
-        checkPaths(mysqlPath, savePath);
-        SettingsService settingsService = SettingsServiceImpl.getInstance();
-        Integer backupCounts = Integer.valueOf(settingsService.getSetting(SettingsServiceImpl.SettingNames.BACKUP_COUNTS));
-        Logger.log("Создание резервной копии");
+    private void createOneBackup(String mysqlPath, String savePath, Integer backupCounts) throws FileNotFoundException{
         File saveDir = new File(savePath);
         File[] existBackups = saveDir.listFiles(new FilenameFilter() {
             @Override
@@ -112,6 +114,17 @@ public class DbServiceImpl implements DbService {
             }
             doBackup(mysqlPath, savePath);
         }
+    }
 
+    @Override
+    public void createBackup(String mysqlPath, String savePath, String additionalSavePath) throws FileNotFoundException {
+        checkPaths(mysqlPath, savePath, additionalSavePath);
+        SettingsService settingsService = SettingsServiceImpl.getInstance();
+        Integer backupCounts = Integer.valueOf(settingsService.getSetting(SettingsServiceImpl.SettingNames.BACKUP_COUNTS));
+        Logger.log("Создание резервной копии");
+        createOneBackup(mysqlPath, savePath, backupCounts);
+        if (additionalSavePath != null){
+            createOneBackup(mysqlPath, additionalSavePath, backupCounts);
+        }
     }
 }

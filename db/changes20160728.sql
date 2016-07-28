@@ -1,0 +1,1 @@
+INSERT INTO `settings` (`id`, `param_name`, `param_value`) VALUES ('6', 'additional.save.path', 'D:\\');

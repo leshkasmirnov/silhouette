@@ -12,5 +12,5 @@ public interface DbService {
      *
      * @param savePath - path to save
      */
-    public void createBackup(String mysqlPath, String savePath) throws FileNotFoundException;
+    public void createBackup(String mysqlPath, String savePath, String additionalSavePath) throws FileNotFoundException;
 }
